@@ -410,11 +410,33 @@ namespace Plugin.PushNotification
 
             }
 
-            OnBuildNotification(notificationBuilder, parameters);
+         //  bool cancelShowNotification = false;
+
+            OnBuildNotification(notificationBuilder, parameters, false);
+
+            if (cancelNotification)
+            {
+                System.Diagnostics.Debug.WriteLine($"{DomainTag}.AlertwasCancelled");
+                cancelNotification = false;
+                return;
+            }
 
             NotificationManager notificationManager = (NotificationManager)context.GetSystemService(Context.NotificationService);
             notificationManager.Notify(tag, notifyId, notificationBuilder.Build());
+
+           
+
         }
+
+        private bool cancelNotification = false;
+
+        public void CancelNotification(){
+
+            cancelNotification = true;
+        }
+
+
+       
 
         /// <summary>
         /// Resolves the localized parameters using the string resources, combining the key and the passed arguments of the notification.
@@ -464,11 +486,18 @@ namespace Plugin.PushNotification
             System.Diagnostics.Debug.WriteLine($"{DomainTag} - OnError - {error}");
         }
 
+       
         /// <summary>
         /// Override to provide customization of the notification to build.
         /// </summary>
         /// <param name="notificationBuilder">Notification builder.</param>
         /// <param name="parameters">Notification parameters.</param>
-        public virtual void OnBuildNotification(NotificationCompat.Builder notificationBuilder, IDictionary<string, object> parameters) { }
+        public virtual void OnBuildNotification(NotificationCompat.Builder notificationBuilder, IDictionary<string, object> parameters, bool cancelShowNotification) {
+
+
+            System.Diagnostics.Debug.WriteLine($"{DomainTag} - OnBuildNotification CancelBuild - {cancelShowNotification.ToString()}");
+
+        }
+
     }
 }
